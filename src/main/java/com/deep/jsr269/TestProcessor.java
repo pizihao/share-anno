@@ -14,7 +14,8 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -58,6 +59,11 @@ public class TestProcessor extends AbstractProcessor {
         set.forEach(element -> {
             // 将Element转换为JCTree
             JCTree jcTree = trees.getTree(element);
+            // 需要导入的包
+            Set<PackageModel> packageList = new HashSet<>();
+            packageList.add(new PackageModel("java.lang.reflect", "Type"));
+            packageList.add(new PackageModel("com.deep.jsr269", "ParameterizedTypeImpl"));
+            ProcessorUtil.addImportInfo(element, treeMaker, trees, names, packageList);
             jcTree.accept(new TreeTranslator() {
 
                 /**
@@ -92,7 +98,6 @@ public class TestProcessor extends AbstractProcessor {
 
                         if (!jcMethodDecls.contains(newMethodName)) {
                             // 对于变量进行生成方法的操作
-                            messager.printMessage(Diagnostic.Kind.NOTE, "为属性：" + jcVariableDecl.getName() + " 创建类型");
                             treeMaker.pos = jcVariableDecl.pos;
                             jcClassDecl.defs = jcClassDecl.defs.prepend(makeType(jcVariableDecl, newMethodName));
                         }
