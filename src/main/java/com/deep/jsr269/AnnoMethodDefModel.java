@@ -60,7 +60,7 @@ public class AnnoMethodDefModel {
         return treeMaker.MethodDef(
             treeMaker.Modifiers(Flags.PUBLIC),
             names.fromString(methodName),
-            treeMaker.Ident(names.fromString(returnType.toString())),
+            (JCTree.JCExpression) returnType,
             List.nil(),
             List.nil(),
             List.nil(),

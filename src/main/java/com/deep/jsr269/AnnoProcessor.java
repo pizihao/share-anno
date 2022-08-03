@@ -55,7 +55,6 @@ public class AnnoProcessor extends AbstractProcessor {
             // 将Element转换为JCTree
             JCTree jcTree = trees.getTree(element);
             jcTree.accept(new TreeTranslator() {
-
                 @Override
                 public void visitClassDef(JCTree.JCClassDecl tree) {
                     List<String> noAnno = noAnno();
@@ -69,8 +68,6 @@ public class AnnoProcessor extends AbstractProcessor {
                             jcMethodDecls = jcMethodDecls.append(methodDecl.getName());
                         }
                     }
-                    messager.printMessage(Diagnostic.Kind.NOTE, "MethodSymbol:" + packageModels);
-                    ProcessorUtil.addImportInfo(element, treeMaker, trees, names, packageModels);
                     for (AnnoMethodDefModel defModel : compoundSet) {
                         JCTree.JCMethodDecl modelJcTree = defModel.createJcTree(treeMaker, names);
                         if (!jcMethodDecls.contains(modelJcTree.getName())) {
@@ -81,6 +78,7 @@ public class AnnoProcessor extends AbstractProcessor {
                     super.visitClassDef(tree);
                 }
             });
+            ProcessorUtil.addImportInfo(element, treeMaker, trees, messager, names, packageModels);
         });
         return true;
     }
@@ -104,8 +102,9 @@ public class AnnoProcessor extends AbstractProcessor {
         // 获取注解类上已有的声明，放入 compoundSet 中
         Map<Symbol.MethodSymbol, Attribute> elementValues = mirror.getElementValues();
         elementValues.forEach((m, a) -> {
-            JCTree returnType = ProcessorUtil.getType(m.getReturnType(), treeMaker, names);
-            JCTree defaultValue = treeMaker.Ident(names.fromString(a.toString()));
+            JCTree returnType = treeMaker.Type(m.getReturnType());
+            AttributeAdapt adapt = ProcessorUtil.attributeAdapt(a);
+            JCTree.JCExpression defaultValue = adapt.buildJCAttribute(treeMaker, messager, a);
             if (returnType != null && defaultValue != null) {
                 String methodName = m.getSimpleName().toString();
                 compoundSet.add(new AnnoMethodDefModel(methodName, returnType, defaultValue));
