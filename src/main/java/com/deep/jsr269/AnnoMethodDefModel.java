@@ -1,13 +1,10 @@
 package com.deep.jsr269;
 
-import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
-import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Names;
-
 import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic;
 import java.util.Objects;
@@ -67,7 +64,15 @@ public class AnnoMethodDefModel {
             null,
             (JCTree.JCExpression) defaultValue
         );
+    }
 
+    @Override
+    public String toString() {
+        return "AnnoMethodDefModel{" +
+            "methodName='" + methodName + '\'' +
+            ", returnType=" + returnType +
+            ", defaultValue=" + defaultValue +
+            '}';
     }
 
     @Override

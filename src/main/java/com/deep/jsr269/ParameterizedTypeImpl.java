@@ -14,7 +14,7 @@ public class ParameterizedTypeImpl implements ParameterizedType {
     private ParameterizedTypeImpl(Class<?> rawType, Type[] actualTypeArguments, Type ownerType) {
         this.actualTypeArguments = actualTypeArguments;
         this.rawType = rawType;
-        this.ownerType = (Type) (ownerType != null ? ownerType : rawType.getDeclaringClass());
+        this.ownerType = (ownerType != null ? ownerType : rawType.getDeclaringClass());
         this.validateConstructorArguments();
     }
 

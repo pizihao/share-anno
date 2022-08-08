@@ -28,7 +28,6 @@
             <artifactId>auto-service-annotations</artifactId>
             <version>1.0-rc7</version>
         </dependency>
-
     </dependencies>
     <build>
         <pluginManagement>

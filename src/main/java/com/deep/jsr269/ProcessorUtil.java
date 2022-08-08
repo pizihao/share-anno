@@ -38,7 +38,6 @@ public class ProcessorUtil {
     public static void addImportInfo(Element element,
                                      TreeMaker treeMaker,
                                      JavacTrees trees,
-                                     Messager messager,
                                      Names names,
                                      Set<PackageModel> packageModel) {
         TreePath treePath = trees.getPath(element);
@@ -58,7 +57,6 @@ public class ProcessorUtil {
                 }
             }
             java.util.List<JCTree> jcTrees = new ArrayList<>(jccu.defs);
-            messager.printMessage(Diagnostic.Kind.NOTE,"类型 :" +packageModel);
             for (PackageModel model : packageModel) {
                 JCTree.JCImport jcImport = treeMaker.Import(
                     treeMaker.Select(

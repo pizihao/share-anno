@@ -1,6 +1,7 @@
 package com.deep.jsr269;
 
 import com.sun.tools.javac.code.Attribute;
+import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
@@ -16,9 +17,10 @@ public interface AttributeAdapt {
 
     /**
      * 类型
+     *
      * @return class
      */
-    Class<?> clsType();
+    JCTree clsType(TreeMaker treeMaker, Names names, Symbol.MethodSymbol symbol);
 
     /**
      * 构建合适的默认值
@@ -27,6 +29,17 @@ public interface AttributeAdapt {
      * @param attribute Attribute
      * @return JCTree
      */
-    JCTree.JCExpression buildJCAttribute(TreeMaker treeMaker, Messager names, Attribute attribute);
+    JCTree.JCExpression buildJCAttribute(TreeMaker treeMaker,
+                                         Names names,
+                                         Symbol.MethodSymbol symbol,
+                                         Attribute attribute,
+                                         Messager messager);
 
+
+    default String arrayToString(String s){
+        if (!s.contains("[") && !s.contains("]")){
+            return s;
+        }
+        return s.replace("[", "").replace("]", "");
+    }
 }

@@ -1,11 +1,13 @@
 package com.deep.jsr269;
 
 import com.sun.tools.javac.code.Attribute;
+import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
 
 import javax.annotation.processing.Messager;
+import javax.tools.Diagnostic;
 
 /**
  * <h2></h2>
@@ -13,13 +15,18 @@ import javax.annotation.processing.Messager;
  * @author Create by liuwenhao on 2022/8/3 17:08
  */
 public class CompoundAttribute implements AttributeAdapt {
+
     @Override
-    public Class<?> clsType() {
-        return Attribute.Compound.class;
+    public JCTree clsType(TreeMaker treeMaker, Names names, Symbol.MethodSymbol symbol) {
+        return treeMaker.Type(symbol.getReturnType());
     }
 
     @Override
-    public JCTree.JCExpression buildJCAttribute(TreeMaker treeMaker, Messager names, Attribute attribute) {
+    public JCTree.JCExpression buildJCAttribute(TreeMaker treeMaker,
+                                                Names names,
+                                                Symbol.MethodSymbol symbol,
+                                                Attribute attribute,
+                                                Messager messager) {
         return treeMaker.Annotation(attribute);
     }
 }
