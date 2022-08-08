@@ -1,12 +1,11 @@
-package com.deep.jsr269;
+package com.deep.jsr269.model;
 
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
-import javax.annotation.processing.Messager;
-import javax.tools.Diagnostic;
+
 import java.util.Objects;
 
 /**

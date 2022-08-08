@@ -1,4 +1,4 @@
-package com.deep.jsr269;
+package com.deep.jsr269.attribute;
 
 import com.sun.tools.javac.code.Attribute;
 import com.sun.tools.javac.code.Symbol;

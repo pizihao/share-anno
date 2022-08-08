@@ -1,4 +1,4 @@
-package com.deep.jsr269;
+package com.deep.jsr269.attribute;
 
 import com.sun.tools.javac.code.Attribute;
 import com.sun.tools.javac.code.Symbol;
@@ -9,9 +9,9 @@ import com.sun.tools.javac.util.Names;
 /**
  * <h2></h2>
  *
- * @author Create by liuwenhao on 2022/8/3 17:08
+ * @author Create by liuwenhao on 2022/8/3 17:07
  */
-public class CompoundAttribute implements AttributeAdapt {
+public class ConstAttribute implements AttributeAdapt {
 
     @Override
     public JCTree clsType(TreeMaker treeMaker, Names names, Symbol.MethodSymbol symbol) {
@@ -23,6 +23,6 @@ public class CompoundAttribute implements AttributeAdapt {
                                                 Symbol.MethodSymbol symbol,
                                                 Names names,
                                                 Attribute attribute) {
-        return treeMaker.Annotation(attribute);
+        return treeMaker.Literal(attribute.getValue());
     }
 }

@@ -1,5 +1,9 @@
 package com.deep.jsr269;
 
+import com.deep.jsr269.annotation.Top;
+import com.deep.jsr269.attribute.AttributeAdapt;
+import com.deep.jsr269.model.AnnoMethodDefModel;
+import com.deep.jsr269.model.PackageModel;
 import com.google.auto.service.AutoService;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
@@ -27,13 +31,14 @@ import java.util.Set;
  * @author Create by liuwenhao on 2022/8/1 17:26
  */
 @AutoService(Processor.class)
-@SupportedAnnotationTypes("com.deep.jsr269.Top")
+@SupportedAnnotationTypes("com.deep.jsr269.annotation.Top")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class AnnoProcessor extends AbstractProcessor {
     private Messager messager;
     private JavacTrees trees;
     private TreeMaker treeMaker;
     private Names names;
+    private static final String TOP_FULL_NAME = "@com.deep.jsr269.annotation.Top";
 
     private final Set<PackageModel> packageModels = new HashSet<>();
 
@@ -60,7 +65,7 @@ public class AnnoProcessor extends AbstractProcessor {
             jcTree.accept(new TreeTranslator() {
                 @Override
                 public void visitClassDef(JCTree.JCClassDecl tree) {
-                    List<String> noAnno = noAnno();
+                    List<String> noAnno = noAnno(tree);
                     Set<AnnoMethodDefModel> compoundSet = new HashSet<>();
                     getCompound(tree, noAnno, compoundSet);
                     List<Name> jcMethodDecls = List.nil();
@@ -162,14 +167,41 @@ public class AnnoProcessor extends AbstractProcessor {
      *
      * @return List<String>
      */
-    private List<String> noAnno() {
-        return List.of(
-            "java.lang.annotation.Target",
-            "java.lang.annotation.Retention",
-            "java.lang.annotation.Documented",
-            "java.lang.annotation.Inherited",
-            "java.lang.annotation.Repeatable",
-            "com.deep.jsr269.Top"
-        );
+    private List<String> noAnno(JCTree.JCClassDecl decl) {
+        if (decl == null ||decl.sym == null){
+            return TopHandle.base();
+        }
+//        List<Attribute.Compound> mirrors = decl.sym.getAnnotationMirrors();
+//        TopHandle.allAnno(mirrors);
+//        for (Attribute.Compound mirror : mirrors) {
+//            String s = mirror.getValue().toString();
+//            if (s != null && s.contains(TOP_FULL_NAME)) {
+//                Map<Symbol.MethodSymbol, Attribute> elementValues = mirror.getElementValues();
+//                elementValues.forEach((symbol, attribute) -> {
+//                    Object attributeValue = attribute.getValue();
+////                    messager.printMessage(Diagnostic.Kind.NOTE, "内容 ：" + attributeValue);
+//                });
+//
+//            }
+//        }
+
+        // 忽略的
+//        Class<?>[] ignore = top.ignore();
+//        ListBuffer<String> ignoreList = Arrays.stream(ignore)
+//            .distinct()
+//            .map(Class::getName)
+//            .collect(Collectors.toCollection(ListBuffer::new));
+
+        // 需要写入的
+//        Class<?>[] importance = top.importance();
+//        ListBuffer<String> importanceList = Arrays.stream(ignore)
+//            .distinct()
+//            .map(Class::getName)
+//            .collect(Collectors.toCollection(ListBuffer::new));
+
+        // 全部的注解
+//        List<Attribute.Compound> mirrors = decl.sym.getAnnotationMirrors();
+
+        return TopHandle.base();
     }
 }

@@ -1,5 +1,7 @@
 package com.deep.jsr269;
 
+import com.deep.jsr269.attribute.*;
+import com.deep.jsr269.model.PackageModel;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.api.JavacTrees;
@@ -9,9 +11,7 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
 
-import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
-import javax.tools.Diagnostic;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -60,8 +60,8 @@ public class ProcessorUtil {
             for (PackageModel model : packageModel) {
                 JCTree.JCImport jcImport = treeMaker.Import(
                     treeMaker.Select(
-                        treeMaker.Ident(names.fromString(model.packageName)),
-                        names.fromString(model.className)),
+                        treeMaker.Ident(names.fromString(model.getPackageName())),
+                        names.fromString(model.getClassName())),
                     false);
                 if (!jcTrees.contains(jcImport)) {
                     jcTrees.add(0, jcImport);
