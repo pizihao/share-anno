@@ -6,9 +6,6 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
 
-import javax.annotation.processing.Messager;
-import javax.tools.Diagnostic;
-
 /**
  * <h2></h2>
  *
@@ -23,10 +20,9 @@ public class ConstAttribute implements AttributeAdapt {
 
     @Override
     public JCTree.JCExpression buildJCAttribute(TreeMaker treeMaker,
-                                                Names names,
                                                 Symbol.MethodSymbol symbol,
-                                                Attribute attribute,
-                                                Messager messager) {
+                                                Names names,
+                                                Attribute attribute) {
         return treeMaker.Literal(attribute.getValue());
     }
 }

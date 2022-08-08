@@ -106,7 +106,7 @@ public class AnnoProcessor extends AbstractProcessor {
         elementValues.forEach((m, a) -> {
             AttributeAdapt adapt = ProcessorUtil.attributeAdapt(a);
             JCTree returnType = adapt.clsType(treeMaker, names, m);
-            JCTree.JCExpression defaultValue = adapt.buildJCAttribute(treeMaker, names, m, a, messager);
+            JCTree.JCExpression defaultValue = adapt.buildJCAttribute(treeMaker, m, names, a);
             if (returnType != null && defaultValue != null) {
                 String methodName = m.getSimpleName().toString();
                 compoundSet.add(new AnnoMethodDefModel(methodName, returnType, defaultValue));
@@ -130,7 +130,7 @@ public class AnnoProcessor extends AbstractProcessor {
                 JCTree returnType = methodDecl.getReturnType();
                 JCTree defaultValue = methodDecl.getDefaultValue();
                 if (returnType != null && defaultValue != null) {
-                    messager.printMessage(Diagnostic.Kind.NOTE, "内容 ：" + defaultValue);
+//                    messager.printMessage(Diagnostic.Kind.NOTE, "内容 ：" + defaultValue);
                     String methodName = methodDecl.getName().toString();
                     // 如果已经存在则不覆盖，距离子注解较进的一定要比距离更远的优先级高
                     compoundSet.add(new AnnoMethodDefModel(methodName, returnType, defaultValue));

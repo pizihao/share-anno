@@ -8,9 +8,6 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
 
-import javax.annotation.processing.Messager;
-import javax.tools.Diagnostic;
-
 /**
  * <h2>适配{@link Class}类型</h2>
  *
@@ -33,10 +30,9 @@ public class ClassAttribute implements AttributeAdapt {
 
     @Override
     public JCTree.JCExpression buildJCAttribute(TreeMaker treeMaker,
-                                                Names names,
                                                 Symbol.MethodSymbol symbol,
-                                                Attribute attribute,
-                                                Messager messager) {
+                                                Names names,
+                                                Attribute attribute) {
         Attribute.Class value = (Attribute.Class) attribute;
         Type type = value.getValue();
         List<Type> arguments = type.getTypeArguments();

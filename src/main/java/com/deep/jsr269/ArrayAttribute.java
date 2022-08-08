@@ -1,18 +1,12 @@
 package com.deep.jsr269;
 
 import com.sun.tools.javac.code.Attribute;
-import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Names;
-
-import javax.annotation.processing.Messager;
-import javax.tools.Diagnostic;
-import java.lang.reflect.Type;
 
 /**
  * <h2></h2>
@@ -28,31 +22,18 @@ public class ArrayAttribute implements AttributeAdapt {
 
     @Override
     public JCTree.JCExpression buildJCAttribute(TreeMaker treeMaker,
-                                                Names names,
                                                 Symbol.MethodSymbol symbol,
-                                                Attribute attribute,
-                                                Messager messager) {
+                                                Names names,
+                                                Attribute attribute) {
         Attribute.Array value = (Attribute.Array) attribute;
-        JCTree.JCExpression type = treeMaker.Type(attribute.type);
         List<Attribute> attributes = value.getValue();
         ListBuffer<JCTree.JCExpression> jcTrees = new ListBuffer<>();
         for (Attribute a : attributes) {
             AttributeAdapt adapt = ProcessorUtil.attributeAdapt(a);
-            jcTrees.add(adapt.buildJCAttribute(treeMaker, names, symbol, a, messager));
+            jcTrees.add(adapt.buildJCAttribute(treeMaker, symbol, names, a));
         }
         List<JCTree.JCExpression> sizes = List.of(treeMaker.Literal(jcTrees.size()));
-        JCTree.JCNewArray newArray = treeMaker.NewArray(type, sizes, jcTrees.toList());
-        JCTree.JCVariableDecl varDef = treeMaker.VarDef(
-            treeMaker.Modifiers(Flags.PUBLIC),
-            names.Array,
-            treeMaker.TypeArray(type),
-            newArray
-        );
-        messager.printMessage(Diagnostic.Kind.NOTE, "A :" + varDef);
-        return ident;
+        return treeMaker.NewArray(null, sizes, jcTrees.toList());
 
-//        JCTree.JCArrayTypeTree arrayTypeTree = treeMaker.TypeArray(type);
-//
-//        return arrayTypeTree;
     }
 }

@@ -6,8 +6,6 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
 
-import javax.annotation.processing.Messager;
-
 /**
  * <h2>类型适配</h2>
  *
@@ -30,10 +28,9 @@ public interface AttributeAdapt {
      * @return JCTree
      */
     JCTree.JCExpression buildJCAttribute(TreeMaker treeMaker,
-                                         Names names,
                                          Symbol.MethodSymbol symbol,
-                                         Attribute attribute,
-                                         Messager messager);
+                                         Names names,
+                                         Attribute attribute);
 
 
     default String arrayToString(String s){

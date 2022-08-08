@@ -6,8 +6,6 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
 
-import javax.annotation.processing.Messager;
-
 /**
  * <h2></h2>
  *
@@ -21,10 +19,9 @@ public class EnumAttribute implements AttributeAdapt {
 
     @Override
     public JCTree.JCExpression buildJCAttribute(TreeMaker treeMaker,
-                                                Names names,
                                                 Symbol.MethodSymbol symbol,
-                                                Attribute attribute,
-                                                Messager messager) {
+                                                Names names,
+                                                Attribute attribute) {
         String s = arrayToString(symbol.getReturnType().toString());
         String cls = s.substring(s.lastIndexOf(".") + 1);
         return treeMaker.Select(
