@@ -5,9 +5,9 @@ import com.deep.jsr269.attribute.AttributeAdapt;
 import com.deep.jsr269.model.AnnoMethodDefModel;
 import com.deep.jsr269.model.PackageModel;
 import com.google.auto.service.AutoService;
-import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.api.JavacTrees;
+import com.sun.source.tree.Tree;
 import com.sun.tools.javac.code.Attribute;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
@@ -20,7 +20,6 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -34,11 +33,11 @@ import java.util.Set;
 @SupportedAnnotationTypes("com.deep.jsr269.annotation.Top")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class AnnoProcessor extends AbstractProcessor {
+    @SuppressWarnings("all")
     private Messager messager;
     private JavacTrees trees;
     private TreeMaker treeMaker;
     private Names names;
-    private static final String TOP_FULL_NAME = "@com.deep.jsr269.annotation.Top";
 
     private final Set<PackageModel> packageModels = new HashSet<>();
 
@@ -65,9 +64,11 @@ public class AnnoProcessor extends AbstractProcessor {
             jcTree.accept(new TreeTranslator() {
                 @Override
                 public void visitClassDef(JCTree.JCClassDecl tree) {
-                    List<String> noAnno = noAnno(tree);
+                    Set<String> noAnno = TopHandle.base();
+                    Set<String> anceAnno = new HashSet<>();
                     Set<AnnoMethodDefModel> compoundSet = new HashSet<>();
-                    getCompound(tree, noAnno, compoundSet);
+                    getAnno(tree, noAnno, anceAnno);
+                    getCompound(tree, noAnno, anceAnno, compoundSet);
                     List<Name> jcMethodDecls = List.nil();
                     List<JCTree> defs = tree.defs;
                     for (JCTree def : defs) {
@@ -90,16 +91,24 @@ public class AnnoProcessor extends AbstractProcessor {
         return true;
     }
 
-    private void getCompound(JCTree.JCClassDecl tree, List<String> noAnno, Set<AnnoMethodDefModel> compoundSet) {
+    private void getCompound(JCTree.JCClassDecl tree,
+                             Set<String> noAnno,
+                             Set<String> anceAnno,
+                             Set<AnnoMethodDefModel> compoundSet) {
         forJCClassDecl(tree, compoundSet);
         List<Attribute.Compound> mirrors = tree.sym.getAnnotationMirrors();
         for (Attribute.Compound mirror : mirrors) {
+            /*
+            messager.printMessage(Diagnostic.Kind.NOTE, "内容 ：" + mirror);
+             */
             String declaredType = mirror.getAnnotationType().toString();
             if (!noAnno.contains(declaredType)) {
-                forMirrors(mirror, compoundSet);
+                if (anceAnno.isEmpty() || anceAnno.contains(declaredType)){
+                    forMirrors(mirror, compoundSet);
+                }
                 JCTree mirrorTree = trees.getTree(mirror.type.asElement());
                 if (mirrorTree.getKind().equals(Tree.Kind.ANNOTATION_TYPE)) {
-                    getCompound((JCTree.JCClassDecl) mirrorTree, noAnno, compoundSet);
+                    getCompound((JCTree.JCClassDecl) mirrorTree, noAnno, anceAnno, compoundSet);
                 }
             }
         }
@@ -135,7 +144,6 @@ public class AnnoProcessor extends AbstractProcessor {
                 JCTree returnType = methodDecl.getReturnType();
                 JCTree defaultValue = methodDecl.getDefaultValue();
                 if (returnType != null && defaultValue != null) {
-//                    messager.printMessage(Diagnostic.Kind.NOTE, "内容 ：" + defaultValue);
                     String methodName = methodDecl.getName().toString();
                     // 如果已经存在则不覆盖，距离子注解较进的一定要比距离更远的优先级高
                     compoundSet.add(new AnnoMethodDefModel(methodName, returnType, defaultValue));
@@ -165,43 +173,21 @@ public class AnnoProcessor extends AbstractProcessor {
     /**
      * 将jdk内置的元注解和jsr启动的注解添加到忽略列表中
      *
-     * @return List<String>
+     * @param decl     JCClassDecl类的语法数解析对象
+     * @param anceAnno 添加的注解列表
+     * @param noAnno   忽略的注解列表
      */
-    private List<String> noAnno(JCTree.JCClassDecl decl) {
-        if (decl == null ||decl.sym == null){
-            return TopHandle.base();
+    private void getAnno(JCTree.JCClassDecl decl, Set<String> noAnno, Set<String> anceAnno) {
+        if (decl == null || decl.sym == null) {
+            return;
         }
-//        List<Attribute.Compound> mirrors = decl.sym.getAnnotationMirrors();
-//        TopHandle.allAnno(mirrors);
-//        for (Attribute.Compound mirror : mirrors) {
-//            String s = mirror.getValue().toString();
-//            if (s != null && s.contains(TOP_FULL_NAME)) {
-//                Map<Symbol.MethodSymbol, Attribute> elementValues = mirror.getElementValues();
-//                elementValues.forEach((symbol, attribute) -> {
-//                    Object attributeValue = attribute.getValue();
-////                    messager.printMessage(Diagnostic.Kind.NOTE, "内容 ：" + attributeValue);
-//                });
-//
-//            }
-//        }
-
-        // 忽略的
-//        Class<?>[] ignore = top.ignore();
-//        ListBuffer<String> ignoreList = Arrays.stream(ignore)
-//            .distinct()
-//            .map(Class::getName)
-//            .collect(Collectors.toCollection(ListBuffer::new));
-
-        // 需要写入的
-//        Class<?>[] importance = top.importance();
-//        ListBuffer<String> importanceList = Arrays.stream(ignore)
-//            .distinct()
-//            .map(Class::getName)
-//            .collect(Collectors.toCollection(ListBuffer::new));
-
-        // 全部的注解
-//        List<Attribute.Compound> mirrors = decl.sym.getAnnotationMirrors();
-
-        return TopHandle.base();
+        List<Attribute.Compound> mirrors = decl.sym.getAnnotationMirrors();
+        for (Attribute.Compound mirror : mirrors) {
+            String s = mirror.getAnnotationType().toString();
+            if (s != null && s.equals(TopHandle.TOP_FULL_NAME)) {
+                noAnno.addAll(TopHandle.ignoreAnno(mirror));
+                anceAnno.addAll(TopHandle.importanceAnno(mirror));
+            }
+        }
     }
 }

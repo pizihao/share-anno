@@ -23,7 +23,6 @@ import java.util.Set;
 public class ProcessorUtil {
 
     private ProcessorUtil() {
-
     }
 
     /**
