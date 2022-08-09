@@ -1,5 +1,8 @@
 package com.deep.jsr269.model;
 
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.Name;
+
 import java.util.Objects;
 
 /**
@@ -7,16 +10,22 @@ import java.util.Objects;
  *
  * @author Create by liuwenhao on 2022/8/2 14:17
  */
-public class PackageModel {
+public class ImportModel {
 
     String packageName;
 
     String className;
 
-    public PackageModel(String packageName, String className) {
+    public ImportModel(String packageName, String className) {
         this.packageName = packageName;
         this.className = className;
     }
+
+    public ImportModel(JCTree.JCExpression packageName, Name className) {
+        this.packageName = packageName.toString();
+        this.className = className.toString();
+    }
+
 
     public String getPackageName() {
         return packageName;
@@ -38,7 +47,7 @@ public class PackageModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PackageModel that = (PackageModel) o;
+        ImportModel that = (ImportModel) o;
         return Objects.equals(packageName, that.packageName) && Objects.equals(className, that.className);
     }
 

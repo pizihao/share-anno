@@ -1,11 +1,9 @@
 package com.deep.jsr269;
 
-import com.deep.jsr269.attribute.*;
-import com.deep.jsr269.model.PackageModel;
+import com.deep.jsr269.model.ImportModel;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.api.JavacTrees;
-import com.sun.tools.javac.code.Attribute;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
@@ -38,7 +36,7 @@ public class ProcessorUtil {
                                      TreeMaker treeMaker,
                                      JavacTrees trees,
                                      Names names,
-                                     Set<PackageModel> packageModel) {
+                                     Set<ImportModel> packageModel) {
         TreePath treePath = trees.getPath(element);
         Tree leaf = treePath.getLeaf();
         if (treePath.getCompilationUnit() instanceof JCTree.JCCompilationUnit && leaf instanceof JCTree) {
@@ -47,16 +45,12 @@ public class ProcessorUtil {
             for (JCTree.JCImport jcTree : jccu.getImports()) {
                 if (jcTree != null && (jcTree.qualid instanceof JCTree.JCFieldAccess)) {
                     JCTree.JCFieldAccess jcFieldAccess = (JCTree.JCFieldAccess) jcTree.qualid;
-                    try {
-                        PackageModel model = new PackageModel(jcFieldAccess.selected.toString(), jcFieldAccess.name.toString());
-                        packageModel.remove(model);
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    }
+                    ImportModel model = new ImportModel(jcFieldAccess.selected.toString(), jcFieldAccess.name.toString());
+                    packageModel.remove(model);
                 }
             }
             java.util.List<JCTree> jcTrees = new ArrayList<>(jccu.defs);
-            for (PackageModel model : packageModel) {
+            for (ImportModel model : packageModel) {
                 JCTree.JCImport jcImport = treeMaker.Import(
                     treeMaker.Select(
                         treeMaker.Ident(names.fromString(model.getPackageName())),
@@ -70,17 +64,4 @@ public class ProcessorUtil {
         }
     }
 
-    public static AttributeAdapt attributeAdapt(Attribute value){
-        if (value.getClass().isAssignableFrom(Attribute.Enum.class)){
-            return new EnumAttribute();
-        } else if (value.getClass().isAssignableFrom(Attribute.Class.class)){
-            return new ClassAttribute();
-        }else if (value.getClass().isAssignableFrom(Attribute.Compound.class)){
-            return new CompoundAttribute();
-        }else if (value.getClass().isAssignableFrom(Attribute.Array.class)){
-            return new ArrayAttribute();
-        }else {
-            return new ConstAttribute();
-        }
-    }
 }
