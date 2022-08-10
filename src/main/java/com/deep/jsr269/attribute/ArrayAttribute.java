@@ -30,7 +30,7 @@ public class ArrayAttribute implements AttributeAdapt {
         List<Attribute> attributes = value.getValue();
         ListBuffer<JCTree.JCExpression> jcTrees = new ListBuffer<>();
         for (Attribute a : attributes) {
-            AttributeAdapt adapt = ProcessorUtil.attributeAdapt(a);
+            AttributeAdapt adapt = AttributeHelper.attributeAdapt(a);
             jcTrees.add(adapt.buildJCAttribute(treeMaker, symbol, names, a));
         }
         List<JCTree.JCExpression> sizes = List.of(treeMaker.Literal(jcTrees.size()));
