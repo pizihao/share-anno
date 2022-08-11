@@ -1,6 +1,6 @@
 package com.deep.jsr269;
 
-import com.deep.jsr269.annotation.Top;
+import com.deep.jsr269.annotation.ShareAnnotation;
 import com.deep.jsr269.compound.Compound;
 import com.deep.jsr269.compound.DefaultCompound;
 import com.deep.jsr269.model.AnnoMethodDefModel;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @author Create by liuwenhao on 2022/8/1 17:26
  */
 @AutoService(Processor.class)
-@SupportedAnnotationTypes("com.deep.jsr269.annotation.Top")
+@SupportedAnnotationTypes("com.deep.jsr269.annotation.ShareAnnotation")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SuppressWarnings("all")
 public class AnnoProcessor extends AbstractProcessor {
@@ -51,14 +51,14 @@ public class AnnoProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         // 全部都是注解元素
-        Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(Top.class);
+        Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(ShareAnnotation.class);
         set.forEach(element -> {
             // 将Element转换为JCTree
             JCTree jcTree = trees.getTree(element);
             jcTree.accept(new TreeTranslator() {
                 @Override
                 public void visitClassDef(JCTree.JCClassDecl tree) {
-                    TopHandle handle = new TopHandle(tree);
+                    ShareHandle handle = new ShareHandle(tree);
                     Compound compound = new DefaultCompound(trees, treeMaker, names);
 
                     compound.collectCompound(tree, handle, trees);
@@ -73,7 +73,7 @@ public class AnnoProcessor extends AbstractProcessor {
                             tree.defs = tree.defs.prepend(modelJcTree);
                         }
                     }
-                    ProcessorUtil.addImportInfo(element, treeMaker, trees, names, compound.getImport());
+                    compound.addImportInfo(element);
                     super.visitClassDef(tree);
                 }
             });

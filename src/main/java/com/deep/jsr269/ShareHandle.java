@@ -1,6 +1,6 @@
 package com.deep.jsr269;
 
-import com.deep.jsr269.annotation.Top;
+import com.deep.jsr269.annotation.ShareAnnotation;
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.code.Attribute;
@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
  *
  * @author Create by liuwenhao on 2022/8/8 18:46
  */
-public class TopHandle {
+public class ShareHandle {
 
-    static final String TOP_FULL_NAME = "com.deep.jsr269.annotation.Top";
+    static final String TOP_FULL_NAME = "com.deep.jsr269.annotation.ShareAnnotation";
     static final String IGNORE = "ignore";
     static final String IMPORTANCE = "importance";
 
@@ -35,16 +35,8 @@ public class TopHandle {
     Set<String> anceAnno = new HashSet<>();
 
 
-    public TopHandle(JCTree.JCClassDecl tree) {
+    public ShareHandle(JCTree.JCClassDecl tree) {
         getAnno(tree);
-    }
-
-    public Set<String> getNoAnno() {
-        return noAnno;
-    }
-
-    public Set<String> getAnceAnno() {
-        return anceAnno;
     }
 
     /**
@@ -92,7 +84,7 @@ public class TopHandle {
     }
 
     /**
-     * 提取{@link Top#ignore()}，解析时忽略的注解
+     * 提取{@link ShareAnnotation#ignore()}，解析时忽略的注解
      *
      * @param mirror 适用于注解的Attribute
      * @return Set 注解类型类形式的字符串
@@ -113,7 +105,7 @@ public class TopHandle {
     }
 
     /**
-     * 提取{@link Top#importance()} ，解析时关注的注解
+     * 提取{@link ShareAnnotation#importance()} ，解析时关注的注解
      *
      * @param mirror 适用于注解的Attribute
      * @return Set 注解类型类形式的字符串

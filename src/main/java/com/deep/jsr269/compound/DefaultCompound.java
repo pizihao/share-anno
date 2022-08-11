@@ -13,10 +13,8 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import javax.lang.model.element.Element;
+import java.util.*;
 
 /**
  * <h2></h2>
@@ -78,11 +76,6 @@ public class DefaultCompound implements Compound {
         });
     }
 
-    @Override
-    public Set<ImportModel> getImport() {
-        return importModels;
-    }
-
     public void collectImport(JCTree.JCClassDecl tree) {
         // 包
         TreePath path = trees.getPath(tree.sym);
@@ -95,5 +88,32 @@ public class DefaultCompound implements Compound {
                 JCTree.JCFieldAccess access = (JCTree.JCFieldAccess) c.qualid;
                 importModels.add(new ImportModel(access.selected, access.name));
             });
+    }
+
+
+    /**
+     * 向element中加入import语法，从而导入packageModel中的类
+     *
+     * @param element 元素，一般是类元素，接口元素或注解元素
+     */
+    public void addImportInfo(Element element) {
+        TreePath treePath = trees.getPath(element);
+        JCTree.JCCompilationUnit compilationUnit = (JCTree.JCCompilationUnit) treePath.getCompilationUnit();
+
+        compilationUnit.getImports().stream()
+            .filter(Objects::nonNull)
+            .filter(c -> c.getQualifiedIdentifier() instanceof JCTree.JCFieldAccess)
+            .map(c -> (JCTree.JCFieldAccess) c.getQualifiedIdentifier())
+            .forEach(j -> importModels.remove(new ImportModel(j.selected, j.name)));
+
+        List<JCTree> jcTrees = new ArrayList<>(compilationUnit.defs);
+
+        for (ImportModel model : importModels) {
+            JCTree.JCImport jcImport = model.jcImport(treeMaker,names);
+            if (!jcTrees.contains(jcImport)) {
+                jcTrees.add(0, jcImport);
+            }
+            compilationUnit.defs = com.sun.tools.javac.util.List.from(jcTrees);
+        }
     }
 }

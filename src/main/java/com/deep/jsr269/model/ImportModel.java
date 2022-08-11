@@ -1,7 +1,9 @@
 package com.deep.jsr269.model;
 
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Name;
+import com.sun.tools.javac.util.Names;
 
 import java.util.Objects;
 
@@ -24,6 +26,14 @@ public class ImportModel {
     public ImportModel(JCTree.JCExpression packageName, Name className) {
         this.packageName = packageName.toString();
         this.className = className.toString();
+    }
+
+    public JCTree.JCImport jcImport(TreeMaker treeMaker, Names names) {
+        return treeMaker.Import(
+            treeMaker.Select(
+                treeMaker.Ident(names.fromString(getPackageName())),
+                names.fromString(getClassName())),
+            false);
     }
 
 

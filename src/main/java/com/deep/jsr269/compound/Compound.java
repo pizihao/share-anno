@@ -1,12 +1,12 @@
 package com.deep.jsr269.compound;
 
-import com.deep.jsr269.TopHandle;
+import com.deep.jsr269.ShareHandle;
 import com.deep.jsr269.model.AnnoMethodDefModel;
-import com.deep.jsr269.model.ImportModel;
 import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.code.Attribute;
 import com.sun.tools.javac.tree.JCTree;
 
+import javax.lang.model.element.Element;
 import java.util.Set;
 
 /**
@@ -53,12 +53,12 @@ public interface Compound {
      */
     void forMirrors(Attribute.Compound mirror);
 
-
     /**
-     * 获取import信息
+     * 向element中加入import语法，从而导入packageModel中的类
+     *
+     * @param element 元素，一般是类元素，接口元素或注解元素
      */
-    Set<ImportModel> getImport();
-
+    void addImportInfo(Element element);
 
     /**
      * 递归解析节点树，获取其中注解的方法元素
@@ -68,7 +68,7 @@ public interface Compound {
      * @param trees  解析树
      */
     default void collectCompound(JCTree.JCClassDecl tree,
-                                 TopHandle handle,
+                                 ShareHandle handle,
                                  JavacTrees trees) {
         forJCClassDecl(tree);
 
