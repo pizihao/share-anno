@@ -29,7 +29,7 @@ public interface Compound {
      * 如：<br>
      * {@code
      *
-     * @interface A{
+     * interface A{
      * String B();
      * }
      * <p>
@@ -44,8 +44,8 @@ public interface Compound {
      * 如：<br>
      * {@code
      *
-     * @C(B = "b")
-     * @interface A{
+     * C(B = "b")
+     * interface A{
      * }
      * <p>
      * }<br>
