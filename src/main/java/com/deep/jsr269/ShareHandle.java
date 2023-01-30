@@ -18,9 +18,8 @@ import java.util.stream.Collectors;
  *
  * @author Create by liuwenhao on 2022/8/8 18:46
  */
-public class ShareHandle {
+public class ShareHandle extends AbstractHandler {
 
-    static final String TOP_FULL_NAME = "com.deep.jsr269.annotation.ShareAnnotation";
     static final String IGNORE = "ignore";
     static final String IMPORTANCE = "importance";
 
@@ -76,7 +75,7 @@ public class ShareHandle {
         List<Attribute.Compound> mirrors = decl.sym.getAnnotationMirrors();
         for (Attribute.Compound mirror : mirrors) {
             String s = mirror.getAnnotationType().toString();
-            if (s != null && s.equals(TOP_FULL_NAME)) {
+            if (s != null && s.equals(SHARE_ANNOTATION)) {
                 noAnno.addAll(ignoreAnno(mirror));
                 anceAnno.addAll(importanceAnno(mirror));
             }
@@ -91,7 +90,7 @@ public class ShareHandle {
      */
     private Set<String> ignoreAnno(Attribute.Compound mirror) {
         String s = mirror.getAnnotationType().toString();
-        if (!s.equals(TOP_FULL_NAME)) {
+        if (!s.equals(SHARE_ANNOTATION)) {
             return new HashSet<>();
         }
         return mirror.values.stream()
@@ -112,7 +111,7 @@ public class ShareHandle {
      */
     private Set<String> importanceAnno(Attribute.Compound mirror) {
         String s = mirror.getAnnotationType().toString();
-        if (!s.equals(TOP_FULL_NAME)) {
+        if (!s.equals(SHARE_ANNOTATION)) {
             return new HashSet<>();
         }
         return mirror.values.stream()
@@ -123,20 +122,6 @@ public class ShareHandle {
                 .collect(Collectors.toSet()))
             .flatMap(Collection::stream)
             .collect(Collectors.toSet());
-    }
-
-    /**
-     * 必须被忽略的注解列表
-     */
-    private Set<String> base() {
-        Set<String> set = new HashSet<>();
-        set.add(TOP_FULL_NAME);
-        set.add("java.lang.annotation.Target");
-        set.add("java.lang.annotation.Inherited");
-        set.add("java.lang.annotation.Retention");
-        set.add("java.lang.annotation.Documented");
-        set.add("java.lang.annotation.Repeatable");
-        return set;
     }
 
 }
