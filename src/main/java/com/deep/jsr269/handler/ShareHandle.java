@@ -1,4 +1,4 @@
-package com.deep.jsr269;
+package com.deep.jsr269.handler;
 
 import com.deep.jsr269.annotation.ShareAnnotation;
 import com.sun.source.tree.Tree;

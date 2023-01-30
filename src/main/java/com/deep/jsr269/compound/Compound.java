@@ -1,6 +1,6 @@
 package com.deep.jsr269.compound;
 
-import com.deep.jsr269.ShareHandle;
+import com.deep.jsr269.handler.ShareHandle;
 import com.deep.jsr269.model.AnnoMethodDefModel;
 import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.code.Attribute;

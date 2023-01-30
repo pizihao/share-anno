@@ -21,7 +21,7 @@ import java.util.*;
  *
  * @author Create by liuwenhao on 2022/8/9 17:00
  */
-public class DefaultCompound implements Compound {
+public class ShareCompound implements Compound {
 
     JavacTrees trees;
     TreeMaker treeMaker;
@@ -30,7 +30,7 @@ public class DefaultCompound implements Compound {
 
     Set<AnnoMethodDefModel> methodDefModels = new HashSet<>();
 
-    public DefaultCompound(JavacTrees trees, TreeMaker treeMaker, Names names) {
+    public ShareCompound(JavacTrees trees, TreeMaker treeMaker, Names names) {
         this.trees = trees;
         this.treeMaker = treeMaker;
         this.names = names;
